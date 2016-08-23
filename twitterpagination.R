@@ -8,6 +8,7 @@ library("twitteR")
 library("data.table")
 library(httr)
 library(jsonlite)
+options(scipen = 999)  # do not allow scientific notation
 
 # set variables for twitter API call authorization
 consumer_key = "cckkk"
@@ -64,9 +65,17 @@ while ( cursor != 0 ) {
   iter_num = iter_num + 1
 }
 
+# convert ids to string, so that large numbers are not accidentally truncated
+# adding a new column which copies the follower ids as string
+idlistfull$follower <- as.character(idlistfull$Follower_ids)
 
-# write list of follower ids to csv file.
-write.csv(idlistfull, file = "hw_folr.csv", row.names = FALSE)
+# deleting the old numeric follower ids
+idlistfull$Follower_ids <- NULL
+
+# write list of follower ids to text file.
+# because excel automatically tries to truncate long numbers!!
+# we use the "quote" option, to ensure strings are copied correctly.
+write.table(idlistfull, file = "follow_philly.txt", quote = FALSE, row.names = FALSE) 
   
   
   
